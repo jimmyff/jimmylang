@@ -1,11 +1,8 @@
 import 'tokens.dart';
 
+/// Creates tokens from source code
 class Lexer {
-  static final functions = <String>[
-    'print',
-  ];
-
-  static tokenize(String input) {
+  static List<Token> tokenize(String input) {
     var buffer = '';
     var tokens = <Token>[];
 
@@ -14,7 +11,7 @@ class Lexer {
       final isInString = RegExp(r'^"(.*)$').hasMatch(buffer);
       final isString = RegExp(r'^"(.*)"$').hasMatch(buffer);
 
-      if ((!isInString && [' ', '\n', ';'].contains(character)) || isString) {
+      if ((!isInString && [' ', '\n'].contains(character)) || isString) {
         // skip double whitespace
         if (buffer.isEmpty && RegExp(r'\s').hasMatch(character)) continue;
 
@@ -22,6 +19,15 @@ class Lexer {
 
         // calculate precedence
         switch (buffer) {
+          case 'int':
+          case 'string':
+          case 'double':
+            precedence = 3;
+            break;
+          case '/':
+          case '*':
+            precedence = 2;
+            break;
           case '+':
             precedence = 1;
             break;
@@ -50,11 +56,23 @@ class Lexer {
                 body: buffer,
                 precedence: precedence));
             break;
+          case '(':
+            tokens.add(Token(
+                type: TokenType.openParentheses,
+                body: buffer,
+                precedence: precedence));
+            break;
+          case ')':
+            tokens.add(Token(
+                type: TokenType.closeParentheses,
+                body: buffer,
+                precedence: precedence));
+            break;
 
           default:
 
             // check if function
-            if (functions.contains(buffer)) {
+            if (BuiltInFunctions.values.map((e) => e.name).contains(buffer)) {
               tokens.add(Token(
                   type: TokenType.function,
                   body: buffer,
@@ -87,6 +105,10 @@ class Lexer {
                   precedence: precedence));
             }
         }
+        buffer = '';
+      } else if (!isInString && [';'].contains(character)) {
+        tokens.add(
+            Token(type: TokenType.delimiter, body: character, precedence: 0));
         buffer = '';
       } else {
         buffer += character;

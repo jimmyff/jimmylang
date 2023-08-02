@@ -5,10 +5,17 @@ enum TokenType {
   operator,
   function,
   delimiter,
+  openParentheses, // (
+  closeParentheses, // )
   type,
   variable,
 }
 
+enum BuiltInFunctions {
+  print,
+}
+
+/// Represents a single token in a code statement
 class Token {
   /// priority of processing
   final int precedence;
