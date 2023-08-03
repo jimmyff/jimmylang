@@ -1,3 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'tokens.g.dart';
+
 enum TokenType {
   int,
   double,
@@ -16,6 +20,7 @@ enum BuiltInFunctions {
 }
 
 /// Represents a single token in a code statement
+@JsonSerializable()
 class Token {
   /// priority of processing
   final int precedence;
@@ -31,4 +36,7 @@ class Token {
   String toString() {
     return '${type.name.padRight(16)}${precedence.toString().padRight(4)}$body';
   }
+
+  factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
+  Map<String, dynamic> toJson() => _$TokenToJson(this);
 }

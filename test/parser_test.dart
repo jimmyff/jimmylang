@@ -1,7 +1,14 @@
 import 'package:jimmylang/jimmyscript.dart';
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 
 void main() {
+  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  Logger.root.onRecord.listen((record) {
+    print(
+        '${record.level.name}: ${record.time.millisecond}: ${record.message}');
+  });
+
   test('Simple assign', () {
     final tokens = [
       Token(body: 'double', type: TokenType.type),
@@ -11,7 +18,7 @@ void main() {
     ];
 
     final ast = AstParser.parse(tokens);
-
+    print('# Result');
     print(ast);
 
     expect(tokens, isList);
