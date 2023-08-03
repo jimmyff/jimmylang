@@ -1,11 +1,10 @@
+import 'dart:convert';
+
 import 'package:jimmylang/jimmyscript.dart';
 import 'package:logging/logging.dart';
 
 String input = '''
-double myDouble = 5.4;
-string myString = "Hayyyy, how are you?";
-int counter = 0;
-
+double myDouble = 3.14159265358;
 ''';
 
 /*
@@ -19,7 +18,11 @@ void main(List<String> arguments) {
   });
 
   final tokens = Lexer.tokenize(input);
+  print('Tokens');
+  print(JsonEncoder.withIndent("     ")
+      .convert(tokens.map((e) => e.toJson()).toList()));
   final parsed = AstParser.parse(tokens);
 
-  print(parsed.toJson());
+  print('AST');
+  print(parsed.toString());
 }

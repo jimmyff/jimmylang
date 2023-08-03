@@ -1,3 +1,5 @@
+import 'package:logging/logging.dart';
+
 import 'tokens.dart';
 
 /// Creates tokens from source code
@@ -5,13 +7,16 @@ class Lexer {
   static List<Token> tokenize(String input) {
     var buffer = '';
     var tokens = <Token>[];
+    final _log = Logger('Lexer');
 
     for (var character in input.split('')) {
+      _log.fine('character=$character buffer=$buffer');
+
       //
       final isInString = RegExp(r'^"(.*)$').hasMatch(buffer);
       final isString = RegExp(r'^"(.*)"$').hasMatch(buffer);
 
-      if ((!isInString && [' ', '\n'].contains(character)) || isString) {
+      if ((!isInString && [' ', '\n', ';'].contains(character)) || isString) {
         // skip double whitespace
         if (buffer.isEmpty && RegExp(r'\s').hasMatch(character)) continue;
 
@@ -107,6 +112,8 @@ class Lexer {
         }
         buffer = '';
       } else if (!isInString && [';'].contains(character)) {
+        // if (buffer.isNotEmpty)
+
         tokens.add(
             Token(type: TokenType.delimiter, body: character, precedence: 0));
         buffer = '';
