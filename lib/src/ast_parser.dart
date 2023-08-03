@@ -118,7 +118,8 @@ class AstParser {
       required List<AstNode> queue,
       required List<int> args,
       Logger? log}) {
-    log?.fine('Pushing ${t.type} to AST. queue=$queue args=$args');
+    log?.fine(
+        'Pushing ${t.type} to AST. queue.length=${queue.length} args=$args');
     switch (t.type) {
       case TokenType.operator:
         queue.add(AstNode(

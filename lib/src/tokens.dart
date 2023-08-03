@@ -34,7 +34,7 @@ class Token {
 
   @override
   String toString() {
-    return '${type.name.padRight(16)}${precedence.toString().padRight(4)}$body';
+    return '$type($body)';
   }
 
   factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
