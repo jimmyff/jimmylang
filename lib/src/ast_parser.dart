@@ -77,7 +77,7 @@ class AstParser {
         case TokenType.operator:
           while (operatorStack.isNotEmpty) {
             final o = operatorStack.last;
-            _log.fine('Iterating over op stack: o: $o');
+            _log.fine('Iterating over op stack: o: ${o.type} ${o.body}');
 
             if ((o.precedence > t.precedence ||
                     (o.precedence == t.precedence &&
@@ -92,6 +92,8 @@ class AstParser {
               queue = pushToAst(t: o, queue: queue, args: args, log: _log);
             }
           }
+          operatorStack.add(t);
+          break;
 
         case TokenType.closeParentheses:
           throw Exception('Not implemented');
@@ -104,6 +106,10 @@ class AstParser {
       if (args.isNotEmpty) args.last++;
     }
 
+    for (var o in operatorStack) {
+      pushToAst(t: o, queue: queue, args: args, log: _log);
+    }
+
     return queue.last;
   }
 
@@ -112,7 +118,7 @@ class AstParser {
       required List<AstNode> queue,
       required List<int> args,
       Logger? log}) {
-    log?.fine('Pushing $t to AST. queue=$queue args=$args');
+    log?.fine('Pushing ${t.type} to AST. queue=$queue args=$args');
     switch (t.type) {
       case TokenType.operator:
         queue.add(AstNode(
@@ -124,7 +130,7 @@ class AstParser {
               queue.removeLast(),
               // right
               queue.removeLast()
-            ]));
+            ].reversed.toList()));
         break;
       case TokenType.type:
       case TokenType.function:
